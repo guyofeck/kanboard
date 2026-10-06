@@ -1,0 +1,63 @@
+# Base44 development setup: runs Kanboard from the bind-mounted source with
+# PHP's built-in server (no opcache, so edits are picked up on every request).
+name: kanboard-base44
+services:
+  app:
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM alpine:3.24
+        RUN apk --no-cache add curl php84 php84-phar php84-curl php84-json php84-zlib \
+            php84-xml php84-dom php84-ctype php84-zip php84-iconv php84-pdo php84-pdo_pgsql \
+            php84-pdo_sqlite php84-mbstring php84-session php84-bcmath php84-gd php84-openssl \
+            php84-sockets php84-posix php84-simplexml php84-xmlwriter php84-tokenizer \
+            php84-fileinfo php84-ldap \
+         && ln -sf /usr/bin/php84 /usr/bin/php
+        WORKDIR /var/www/app
+    working_dir: /var/www/app
+    command: ["sh", "-ec", "mkdir -p /data/files /data/cache && exec php -d variables_order=EGPCS -S 0.0.0.0:8080 -t /var/www/app"]
+    ports:
+      - "3000:8080"
+    volumes:
+      - .:/var/www/app
+      - app-data:/data
+    environment:
+      DATA_DIR: /data
+      DEBUG: "false"
+      LOG_DRIVER: stderr
+      DB_DRIVER: postgres
+      DB_HOSTNAME: db
+      DB_PORT: "5432"
+      DB_USERNAME: kanboard
+      DB_PASSWORD: kanboard-dev
+      DB_NAME: kanboard
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/healthcheck.php >/dev/null || (echo 'app: healthcheck.php failed'; exit 1)"]
+      start_period: 20s
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: kanboard
+      POSTGRES_PASSWORD: kanboard-dev
+      POSTGRES_DB: kanboard
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kanboard", "-d", "kanboard"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  app-data:
+  db-data:
