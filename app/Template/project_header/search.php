@@ -7,6 +7,11 @@
 
         <div class="input-addon">
             <?= $this->form->text('search', $filters, array(), array('placeholder="'.t('Filter').'"', 'aria-label="'.t('Filter').'"'), 'input-addon-field') ?>
+            <?php if ($filters['controller'] === 'BoardViewController'): ?>
+            <div class="input-addon-item">
+                <a href="#" class="filter-helper" data-filter="status:open due:today"><?= t('Due today') ?></a>
+            </div>
+            <?php endif ?>
             <div class="input-addon-item">
                 <?= $this->render('app/filters_helper', array('reset' => 'status:open', 'project' => $project)) ?>
             </div>
