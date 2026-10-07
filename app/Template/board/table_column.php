@@ -8,8 +8,8 @@
 
         <!-- column in collapsed mode -->
         <div class="board-column-collapsed">
-            <small class="board-column-header-task-count" title="<?= t('Task count') ?>">
-                <span id="task-number-column-<?= $column['id'] ?>"><span class="ui-helper-hidden-accessible"><?= t('Task count') ?> </span><?= $column['nb_tasks'] ?></span>
+            <small class="board-column-header-task-count" title="<?= t('Open tasks') ?>">
+                <span id="task-number-column-<?= $column['id'] ?>"><span class="ui-helper-hidden-accessible"><?= t('Open tasks') ?> </span><?= $column['column_nb_open_tasks'] ?></span>
             </small>
         </div>
 
@@ -102,11 +102,9 @@
                     <?= $this->app->tooltipMarkdown($column['description']) ?>&nbsp;
                 <?php endif ?>
 
-                <?php if (! empty($column['nb_tasks'])): ?>
-                <span title="<?= t('Number of visible tasks in this column and swimlane') ?>">
-                    <span><span class="ui-helper-hidden-accessible"><?= t('Task count') ?> </span><?= $column['nb_tasks'] ?></span>&nbsp;
+                <span title="<?= t('Open tasks') ?>">
+                    <span><span class="ui-helper-hidden-accessible"><?= t('Open tasks') ?> </span><?= $column['column_nb_open_tasks'] ?></span>&nbsp;
                 </span>
-                <?php endif ?>
 
                 <?php if (! empty($column['nb_unfiltered_tasks_across_swimlane'])): ?>
                 <span title="<?= t('Total number of tasks in this column across all swimlanes') ?>">
