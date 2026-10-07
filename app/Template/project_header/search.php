@@ -11,6 +11,12 @@
                 <?= $this->render('app/filters_helper', array('reset' => 'status:open', 'project' => $project)) ?>
             </div>
 
+            <?php if ($filters['controller'] === 'BoardViewController'): ?>
+            <div class="input-addon-item">
+                <a href="#" class="filter-helper" data-filter="status:open due:today"><?= t('Due today') ?></a>
+            </div>
+            <?php endif ?>
+
             <?php if (isset($custom_filters_list) && ! empty($custom_filters_list)): ?>
             <div class="input-addon-item">
                 <div class="dropdown">
